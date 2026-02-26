@@ -1,9 +1,9 @@
-# ScreenMind — Predicting Mental Health Risk from Survey Data
+# BRFSS-Explorer — Predicting Mental Health Risk from Survey Data
 
 > Can we predict who is at risk of poor mental health from a 15-question survey?
 > **Spoiler: kind of. And understanding *why* it's hard is the most interesting part.**
 
-**[▶ Live Dashboard](https://YOUR-APP.streamlit.app)** &nbsp;|&nbsp; BRFSS 2024 · 449,000 US adults · PyTorch · W&B
+**[▶ Live Dashboard](https://YOUR-USERNAME.github.io/BRFSS-Explorer/)** &nbsp;|&nbsp; BRFSS 2024 · 449,000 US adults · PyTorch · W&B
 
 ---
 
@@ -36,7 +36,7 @@ only part of the variance. The rest is genuinely unknowable from this data.
 | **PyTorch MLP** | Two models from scratch: binary classifier (high-risk) + regressor (days). Custom training loop, early stopping, checkpointing |
 | **Class imbalance handling** | Weighted BCE loss (`pos_weight ≈ 6.6×`) and custom `WeightedMSELoss` that penalises errors on high-burden cases |
 | **W&B experiment tracking** | 3 architecture variants logged with per-epoch loss curves and final metrics to a live dashboard |
-| **Interactive EDA app** | Streamlit dashboard — pick any feature as X-axis, see its relationship to mental health days or life satisfaction |
+| **Interactive web dashboard** | Observable Plot dashboard hosted on GitHub Pages — distribution panel + relationship panel with Spearman ρ |
 
 ---
 
@@ -65,7 +65,8 @@ only part of the variance. The rest is genuinely unknowable from this data.
 ```
 Data & ML       Python 3.11 · PyTorch · NumPy · Pandas · scikit-learn (preprocessing only)
 Experiment log  Weights & Biases
-Dashboard       Streamlit · Plotly · SciPy
+Web dashboard   Observable Plot · D3 · vanilla HTML/CSS/JS · GitHub Pages
+Streamlit app   Streamlit · Plotly · SciPy
 Dataset         BRFSS 2024 (CDC) — public domain, 449k US adults
 ```
 
@@ -74,8 +75,8 @@ Dataset         BRFSS 2024 (CDC) — public domain, 449k US adults
 ## Run Locally
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/ScreenTimeML.git
-cd ScreenTimeML
+git clone https://github.com/YOUR-USERNAME/BRFSS-Explorer.git
+cd BRFSS-Explorer
 pip install -r requirements.txt
 
 # Launch the interactive dashboard
@@ -94,9 +95,14 @@ and place it in `data/raw/`, then run notebooks `01` through `04` in order.
 ## Project Structure
 
 ```
-ScreenTimeML/
+BRFSS-Explorer/
+├── docs/                   ← GitHub Pages web dashboard (live at github.io)
+│   ├── index.html
+│   ├── app.js              ← Observable Plot + D3 interactive charts
+│   ├── styles.css
+│   └── data/brfss_test.csv ← 67k respondents, 15 features (exported)
 ├── dashboard/
-│   └── app.py              ← Streamlit EDA dashboard (run this)
+│   └── app.py              ← Streamlit EDA dashboard (run locally)
 ├── notebooks/
 │   ├── 01_eda.ipynb        ← Exploratory analysis
 │   ├── 02_preprocessing.ipynb

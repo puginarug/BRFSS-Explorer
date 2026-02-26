@@ -1,4 +1,4 @@
-// ScreenMind — Mental Health Risk Explorer
+// BRFSS-Explorer — Mental Health Data Explorer
 // Observable Plot + D3 · vanilla ES module · no build step
 
 import * as Plot from "https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6/+esm";
@@ -135,11 +135,116 @@ function spearmanCorr(x, y) {
 
 // ── DOM refs ──────────────────────────────────────────────────────────────────
 
+// Panel 1 — Distribution
+const distSelect   = document.getElementById("dist-select");
+const distChartDiv = document.getElementById("dist-chart");
+const distDescEl   = document.getElementById("dist-desc");
+
+// Panel 2 — Relationships
 const xSelect   = document.getElementById("x-select");
 const ySelect   = document.getElementById("y-select");
 const chartDiv  = document.getElementById("chart");
 const corrEl    = document.getElementById("correlation");
 const descEl    = document.getElementById("feature-desc");
+
+// ── Populate dropdowns ────────────────────────────────────────────────────────
+
+function populateDistDropdown() {
+  distSelect.innerHTML = "";
+  Object.entries(FEATURES).forEach(([key, meta]) => {
+    const opt = document.createElement("option");
+    opt.value       = key;
+    opt.textContent = meta.label;
+    distSelect.appendChild(opt);
+  });
+  // Default to loneliness
+  distSelect.value = "loneliness";
+}
+
+// ── Render distribution chart (Panel 1) ──────────────────────────────────────
+
+function renderDistribution() {
+  const xKey = distSelect.value;
+  const feat = FEATURES[xKey];
+  if (!feat || !window.__data) return;
+
+  const data  = window.__data;
+  const total = data.length;
+  const hasBin = !!feat.bin;
+
+  // Count respondents per level
+  const grouped = d3.rollups(
+    data,
+    v => v.length,
+    d => hasBin ? feat.bin(d[xKey]) : d[xKey]
+  )
+    .map(([level, count]) => ({
+      level,
+      count,
+      pct:   count / total * 100,
+      label: feat.levels?.[level] ?? String(level),
+    }))
+    .sort((a, b) => a.level - b.level);
+
+  const width = distChartDiv.offsetWidth || 840;
+
+  const plot = Plot.plot({
+    width,
+    height: 320,
+    marginBottom: 64,
+    marginLeft: 56,
+    style: {
+      background:  "transparent",
+      color:       "#c8c8c8",
+      fontFamily:  "Inter, sans-serif",
+      fontSize:    "13px",
+    },
+    x: {
+      label:      null,
+      tickRotate: grouped.length > 6 ? -30 : 0,
+      tickFormat: d => feat.levels?.[d] ?? String(d),
+      padding:    0.25,
+    },
+    y: {
+      label:       "% of respondents",
+      grid:        true,
+      zero:        true,
+      line:        true,
+      labelOffset: 40,
+    },
+    marks: [
+      Plot.barY(grouped, {
+        x:    "level",
+        y:    "pct",
+        fill: "#4AABF0",
+        rx:   4,
+        tip:  true,
+        title: d => `${d.label}\n${d.pct.toFixed(1)}%  (n = ${d.count.toLocaleString()})`,
+      }),
+      Plot.ruleY([0], { stroke: "#333", strokeWidth: 1.5 }),
+      Plot.text(grouped, {
+        x:          "level",
+        y:          "pct",
+        text:       d => `${d.pct.toFixed(1)}%`,
+        dy:         -10,
+        fill:       "#e0e0e0",
+        fontSize:   12,
+        fontWeight: "600",
+      }),
+    ],
+  });
+
+  // Fade out → swap → fade in
+  distChartDiv.style.opacity = "0";
+  setTimeout(() => {
+    distChartDiv.innerHTML = "";
+    distChartDiv.appendChild(plot);
+    void distChartDiv.offsetHeight;
+    distChartDiv.style.opacity = "1";
+  }, 140);
+
+  distDescEl.textContent = feat.description;
+}
 
 // ── Populate X dropdown ───────────────────────────────────────────────────────
 
@@ -264,6 +369,8 @@ function renderChart() {
 
 // ── Event listeners ───────────────────────────────────────────────────────────
 
+distSelect.addEventListener("change", renderDistribution);
+
 ySelect.addEventListener("change", () => {
   populateXDropdown(ySelect.value === "life_satisfaction" ? "life_satisfaction" : null);
   renderChart();
@@ -276,9 +383,20 @@ xSelect.addEventListener("change", renderChart);
 try {
   const raw = await d3.csv("data/brfss_test.csv", d3.autoType);
   window.__data = raw;
+  // Panel 1
+  populateDistDropdown();
+  renderDistribution();
+  // Panel 2
   populateXDropdown(null);
   renderChart();
 } catch (err) {
+  const errMsg = `
+    <p class="loading">
+      Could not load data. If running locally, use a web server:<br><br>
+      <code>python -m http.server 8080</code><br>
+      then open <a href="http://localhost:8080">http://localhost:8080</a>
+    </p>`;
+  distChartDiv.innerHTML = errMsg;
   chartDiv.innerHTML = `
     <p class="loading">
       Could not load data. If running locally, use a web server:<br><br>

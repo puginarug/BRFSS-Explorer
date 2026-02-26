@@ -1,7 +1,7 @@
-# ScreenMind — CLAUDE.md
+# BRFSS-Explorer — CLAUDE.md
 
 ## Project context
-ScreenMind is a learning project by David Zingerman, a computational biologist
+BRFSS-Explorer is a learning project by David Zingerman, a computational biologist
 (M.Sc., Weizmann Institute) transitioning to industry data science.
 
 This is an end-to-end intelligent mental health risk assessment system that

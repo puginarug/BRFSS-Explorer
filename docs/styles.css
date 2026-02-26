@@ -128,6 +128,43 @@ header h1 {
   margin-bottom: 20px;
 }
 
+/* ── Panel header ──────────────────────────────────────────────────────────── */
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.panel-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent-low);
+  border: 1px solid var(--accent-mid);
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.panel-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin-bottom: 2px;
+}
+
+.panel-subtitle {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  letter-spacing: 0.01em;
+}
+
 /* ── Controls ──────────────────────────────────────────────────────────────── */
 .controls {
   display: flex;
@@ -204,19 +241,22 @@ select option { background: #1a1a1a; }
   text-align: center;
 }
 
-/* ── Chart area ────────────────────────────────────────────────────────────── */
+/* ── Chart areas ───────────────────────────────────────────────────────────── */
+#dist-chart,
 #chart {
-  min-height: 380px;
+  min-height: 320px;
   transition: opacity 0.15s ease;
   margin-bottom: 20px;
 }
 
 /* Observable Plot SVG styling overrides */
+#dist-chart svg,
 #chart svg {
   overflow: visible;
   width: 100%;
 }
 
+#dist-chart figure,
 #chart figure {
   margin: 0;
 }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ScreenMind — Mental Health Risk Explorer</title>
+  <title>BRFSS-Explorer — Mental Health Data Explorer</title>
   <meta name="description" content="Interactive exploration of mental health risk factors across 449,000 US adults. BRFSS 2024 data, PyTorch model.">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -13,7 +13,7 @@
     <!-- Header -->
     <header>
       <p class="eyebrow">BRFSS 2024 &middot; CDC Public Data &middot; 449,000 US Adults</p>
-      <h1>Mental Health Risk Explorer</h1>
+      <h1>Mental Health Data Explorer</h1>
       <p class="subtitle">
         <span>How does loneliness affect mental health burden?</span>
         <span>Financial stress?</span>
@@ -40,8 +40,40 @@
 
     <hr class="divider">
 
-    <!-- Controls -->
-    <p class="section-label">Explore the data</p>
+    <!-- ── Panel 1: Distribution ───────────────────────────────────── -->
+
+    <div class="panel-header">
+      <span class="panel-number">1</span>
+      <div>
+        <p class="panel-title">Distribution</p>
+        <p class="panel-subtitle">How are respondents spread across each factor?</p>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="control-group">
+        <span>Variable</span>
+        <select id="dist-select" aria-label="Variable to show distribution for"></select>
+      </div>
+    </div>
+
+    <div id="dist-chart">
+      <p class="loading">Loading data&hellip;</p>
+    </div>
+
+    <p id="dist-desc"></p>
+
+    <hr class="divider">
+
+    <!-- ── Panel 2: Relationships ──────────────────────────────────── -->
+
+    <div class="panel-header">
+      <span class="panel-number">2</span>
+      <div>
+        <p class="panel-title">Relationships</p>
+        <p class="panel-subtitle">How does each factor relate to mental health outcomes?</p>
+      </div>
+    </div>
 
     <div class="controls">
 
@@ -65,22 +97,22 @@
 
     </div>
 
-    <!-- Chart -->
     <div id="chart">
       <p class="loading">Loading data&hellip;</p>
     </div>
 
-    <!-- Feature description -->
     <p id="feature-desc"></p>
 
     <hr class="divider">
 
     <!-- Context note -->
     <p style="font-size:0.82rem; color: var(--text-dim); line-height: 1.7;">
-      Each bar shows the <strong style="color:var(--text-muted)">mean</strong> of the outcome
-      for respondents at that level of the selected risk factor.
-      Bars are ordered by the feature&rsquo;s coded value.
-      Spearman &rho; measures monotone correlation across all 67,428 test-set respondents
+      <strong style="color:var(--text-muted)">Panel 1</strong> shows the percentage of the
+      67,428 test-set respondents at each level of the selected variable.
+      <strong style="color:var(--text-muted)">Panel 2</strong> shows the
+      <strong style="color:var(--text-muted)">mean</strong> of the chosen outcome
+      for respondents at each level of the selected risk factor.
+      Spearman &rho; measures monotone correlation
       (&minus;1 = perfectly inverse, 0 = none, +1 = perfectly aligned).
     </p>
 
@@ -88,7 +120,7 @@
     <footer>
       <span>Built by David Zingerman &mdash; computational biologist → data science</span>
       <span>
-        <a href="https://github.com/YOUR-USERNAME/ScreenMind" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/YOUR-USERNAME/BRFSS-Explorer" target="_blank" rel="noopener">GitHub</a>
         &nbsp;&middot;&nbsp;
         <a href="https://www.cdc.gov/brfss/annual_data/annual_2024.html" target="_blank" rel="noopener">BRFSS 2024 (CDC)</a>
       </span>
