@@ -3,7 +3,7 @@
 > Can we predict who is at risk of poor mental health from a 15-question survey?
 > **Spoiler: kind of. And understanding *why* it's hard is the most interesting part.**
 
-**[▶ Live Dashboard](https://YOUR-USERNAME.github.io/BRFSS-Explorer/)** &nbsp;|&nbsp; BRFSS 2024 · 449,000 US adults · PyTorch · W&B
+**[▶ Live Dashboard](https://puginarug.github.io/BRFSS-Explorer/)** &nbsp;|&nbsp; BRFSS 2024 · 449,000 US adults · PyTorch · W&B
 
 ---
 
