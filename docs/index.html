@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ScreenMind — Mental Health Risk Explorer</title>
+  <meta name="description" content="Interactive exploration of mental health risk factors across 449,000 US adults. BRFSS 2024 data, PyTorch model.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+
+    <!-- Header -->
+    <header>
+      <p class="eyebrow">BRFSS 2024 &middot; CDC Public Data &middot; 449,000 US Adults</p>
+      <h1>Mental Health Risk Explorer</h1>
+      <p class="subtitle">
+        <span>How does loneliness affect mental health burden?</span>
+        <span>Financial stress?</span>
+        <span>Age?</span>
+        <span>Pick any variable below to find out.</span>
+      </p>
+    </header>
+
+    <!-- Stat cards -->
+    <section class="stats" aria-label="Key statistics">
+      <div class="card">
+        <span class="value">449k</span>
+        <span class="label">Adults Surveyed</span>
+      </div>
+      <div class="card">
+        <span class="value">13.2%</span>
+        <span class="label">Classified High&ndash;Risk (&gt;14 bad days/mo)</span>
+      </div>
+      <div class="card">
+        <span class="value">AUC 0.856</span>
+        <span class="label">PyTorch Classifier Performance</span>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Controls -->
+    <p class="section-label">Explore the data</p>
+
+    <div class="controls">
+
+      <div class="control-group">
+        <span>Y&nbsp;&mdash;&nbsp;Outcome</span>
+        <select id="y-select" aria-label="Y-axis outcome">
+          <option value="menthlth_days">Mental Health Days (0–30 / month)</option>
+          <option value="life_satisfaction">Life Satisfaction (1=Best → 4=Worst)</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <span>X&nbsp;&mdash;&nbsp;Risk Factor</span>
+        <select id="x-select" aria-label="X-axis risk factor"></select>
+      </div>
+
+      <div class="rho-group">
+        <span>Spearman &rho;</span>
+        <span id="correlation">&mdash;</span>
+      </div>
+
+    </div>
+
+    <!-- Chart -->
+    <div id="chart">
+      <p class="loading">Loading data&hellip;</p>
+    </div>
+
+    <!-- Feature description -->
+    <p id="feature-desc"></p>
+
+    <hr class="divider">
+
+    <!-- Context note -->
+    <p style="font-size:0.82rem; color: var(--text-dim); line-height: 1.7;">
+      Each bar shows the <strong style="color:var(--text-muted)">mean</strong> of the outcome
+      for respondents at that level of the selected risk factor.
+      Bars are ordered by the feature&rsquo;s coded value.
+      Spearman &rho; measures monotone correlation across all 67,428 test-set respondents
+      (&minus;1 = perfectly inverse, 0 = none, +1 = perfectly aligned).
+    </p>
+
+    <!-- Footer -->
+    <footer>
+      <span>Built by David Zingerman &mdash; computational biologist → data science</span>
+      <span>
+        <a href="https://github.com/YOUR-USERNAME/ScreenMind" target="_blank" rel="noopener">GitHub</a>
+        &nbsp;&middot;&nbsp;
+        <a href="https://www.cdc.gov/brfss/annual_data/annual_2024.html" target="_blank" rel="noopener">BRFSS 2024 (CDC)</a>
+      </span>
+    </footer>
+
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
