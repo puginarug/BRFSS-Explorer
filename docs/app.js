@@ -141,11 +141,12 @@ const distChartDiv = document.getElementById("dist-chart");
 const distDescEl   = document.getElementById("dist-desc");
 
 // Panel 2 — Relationships
-const xSelect   = document.getElementById("x-select");
-const ySelect   = document.getElementById("y-select");
-const chartDiv  = document.getElementById("chart");
-const corrEl    = document.getElementById("correlation");
-const descEl    = document.getElementById("feature-desc");
+const xSelect        = document.getElementById("x-select");
+const ySelect        = document.getElementById("y-select");
+const chartTypeSelect = document.getElementById("chart-type");
+const chartDiv       = document.getElementById("chart");
+const corrEl         = document.getElementById("correlation");
+const descEl         = document.getElementById("feature-desc");
 
 // ── Populate dropdowns ────────────────────────────────────────────────────────
 
@@ -275,95 +276,126 @@ function populateXDropdown(excludeKey) {
 // ── Render chart ──────────────────────────────────────────────────────────────
 
 function renderChart() {
-  const xKey  = xSelect.value;
-  const yKey  = ySelect.value;
-  const feat  = FEATURES[xKey];
+  const xKey      = xSelect.value;
+  const yKey      = ySelect.value;
+  const chartType = chartTypeSelect.value;   // "bar" | "box"
+  const feat      = FEATURES[xKey];
 
   if (!feat || !window.__data) return;
 
-  const data = window.__data;
-
-  // Group by feature level → mean of outcome
+  const data   = window.__data;
   const hasBin = !!feat.bin;
-  const grouped = d3.rollups(
-    data,
-    v => d3.mean(v, d => d[yKey]),
-    d => hasBin ? feat.bin(d[xKey]) : d[xKey]
-  )
-    .map(([level, mean]) => ({
-      level,
-      mean,
-      label: feat.levels?.[level] ?? String(level),
-    }))
-    .sort((a, b) => a.level - b.level)
-    .filter(d => d.mean != null && isFinite(d.mean));
+  const xOf    = d => hasBin ? feat.bin(d[xKey]) : d[xKey];
 
-  // Build Observable Plot
+  // Unique sorted levels (needed for tickRotate in both chart types)
+  const levels = [...new Set(data.map(xOf))].sort((a, b) => a - b);
+
+  // Shared Plot config
   const width = chartDiv.offsetWidth || 840;
-
-  const plot = Plot.plot({
+  const base = {
     width,
     height: 380,
     marginBottom: 64,
-    marginLeft: 56,
+    marginLeft:   56,
     style: {
-      background:  "transparent",
-      color:       "#c8c8c8",
-      fontFamily:  "Inter, sans-serif",
-      fontSize:    "13px",
+      background: "transparent",
+      color:      "#c8c8c8",
+      fontFamily: "Inter, sans-serif",
+      fontSize:   "13px",
     },
     x: {
-      label:       null,
-      tickRotate:  grouped.length > 6 ? -30 : 0,
-      tickFormat:  d => feat.levels?.[d] ?? String(d),
-      padding:     0.25,
+      label:      null,
+      tickRotate: levels.length > 6 ? -30 : 0,
+      tickFormat: d => feat.levels?.[d] ?? String(d),
+      padding:    0.25,
     },
     y: {
-      label:       Y_OPTIONS[yKey].label,
-      grid:        true,
-      zero:        true,
-      line:        true,
-      labelOffset: 40,
+      label:        Y_OPTIONS[yKey].label,
+      labelAnchor:  "center",
+      grid:         true,
+      zero:         true,
+      line:         true,
+      labelOffset:  44,
     },
-    marks: [
-      Plot.barY(grouped, {
-        x:    "level",
-        y:    "mean",
-        fill: "#F0A500",
-        rx:   4,
-        tip:  true,
-        title: d => `${d.label}\n${d.mean.toFixed(2)}`,
-      }),
-      Plot.ruleY([0], { stroke: "#333", strokeWidth: 1.5 }),
-      Plot.text(grouped, {
-        x:         "level",
-        y:         "mean",
-        text:      d => d.mean.toFixed(2),
-        dy:        -10,
-        fill:      "#e0e0e0",
-        fontSize:  12,
-        fontWeight: "600",
-      }),
-    ],
-  });
+  };
+
+  let plot;
+
+  if (chartType === "bar") {
+    // ── Bar of means ─────────────────────────────────────────────
+    const grouped = d3.rollups(
+      data,
+      v => d3.mean(v, d => d[yKey]),
+      xOf
+    )
+      .map(([level, mean]) => ({
+        level,
+        mean,
+        label: feat.levels?.[level] ?? String(level),
+      }))
+      .sort((a, b) => a.level - b.level)
+      .filter(d => d.mean != null && isFinite(d.mean));
+
+    plot = Plot.plot({
+      ...base,
+      marks: [
+        Plot.barY(grouped, {
+          x:     "level",
+          y:     "mean",
+          fill:  "#F0A500",
+          rx:    4,
+          tip:   true,
+          title: d => `${d.label}\n${d.mean.toFixed(2)}`,
+        }),
+        Plot.ruleY([0], { stroke: "#333", strokeWidth: 1.5 }),
+        Plot.text(grouped, {
+          x:          "level",
+          y:          "mean",
+          text:       d => d.mean.toFixed(2),
+          dy:         -10,
+          fill:       "#e0e0e0",
+          fontSize:   12,
+          fontWeight: "600",
+        }),
+      ],
+    });
+
+  } else {
+    // ── Box plot (median + IQR + whiskers) ───────────────────────
+    // Plot.boxY passes raw rows; Observable Plot computes statistics per x group.
+    plot = Plot.plot({
+      ...base,
+      marks: [
+        Plot.boxY(data, {
+          x:            xOf,
+          y:            d => d[yKey],
+          fill:         "#F0A500",
+          fillOpacity:  0.15,
+          stroke:       "#F0A500",
+          strokeWidth:  1.5,
+          r:            2,           // outlier dot radius
+        }),
+        Plot.ruleY([0], { stroke: "#333", strokeWidth: 1.5 }),
+      ],
+    });
+  }
 
   // Fade out → swap → fade in
   chartDiv.style.opacity = "0";
   setTimeout(() => {
     chartDiv.innerHTML = "";
     chartDiv.appendChild(plot);
-    void chartDiv.offsetHeight; // reflow
+    void chartDiv.offsetHeight;
     chartDiv.style.opacity = "1";
   }, 140);
 
-  // Spearman ρ
-  const xVals = data.map(d => hasBin ? feat.bin(d[xKey]) : d[xKey]);
+  // Spearman ρ (same regardless of chart type — it's a property of the data)
+  const xVals = data.map(xOf);
   const yVals = data.map(d => d[yKey]);
   const rho   = spearmanCorr(xVals, yVals);
   corrEl.textContent = `${rho >= 0 ? "+" : ""}${rho.toFixed(3)}`;
   corrEl.style.color = Math.abs(rho) > 0.2 ? "#F0A500" : "#666";
 
-  // Feature description
   descEl.textContent = feat.description;
 }
 
@@ -377,6 +409,7 @@ ySelect.addEventListener("change", () => {
 });
 
 xSelect.addEventListener("change", renderChart);
+chartTypeSelect.addEventListener("change", renderChart);
 
 // ── Load data and init ────────────────────────────────────────────────────────
 

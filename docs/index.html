@@ -90,6 +90,14 @@
         <select id="x-select" aria-label="X-axis risk factor"></select>
       </div>
 
+      <div class="control-group">
+        <span>Chart&nbsp;Type</span>
+        <select id="chart-type" aria-label="Chart type">
+          <option value="bar">Bar (mean)</option>
+          <option value="box">Box plot (spread)</option>
+        </select>
+      </div>
+
       <div class="rho-group">
         <span>Spearman &rho;</span>
         <span id="correlation">&mdash;</span>
@@ -109,10 +117,10 @@
     <p style="font-size:0.82rem; color: var(--text-dim); line-height: 1.7;">
       <strong style="color:var(--text-muted)">Panel 1</strong> shows the percentage of the
       67,428 test-set respondents at each level of the selected variable.
-      <strong style="color:var(--text-muted)">Panel 2</strong> shows the
-      <strong style="color:var(--text-muted)">mean</strong> of the chosen outcome
-      for respondents at each level of the selected risk factor.
-      Spearman &rho; measures monotone correlation
+      <strong style="color:var(--text-muted)">Panel 2</strong> shows either the
+      <strong style="color:var(--text-muted)">mean</strong> (bar) or the full distribution
+      (box plot: median line, IQR box, whiskers at 1.5&times;IQR) of the chosen outcome
+      per level. Spearman &rho; measures monotone correlation
       (&minus;1 = perfectly inverse, 0 = none, +1 = perfectly aligned).
     </p>
 
