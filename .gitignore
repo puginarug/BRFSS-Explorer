@@ -1,0 +1,70 @@
+# ============================================================
+# Data — raw BRFSS file is 1 GB, never commit it.
+# Processed train/val splits are ~25 MB — also excluded.
+# Only the test split + scaler (~4.5 MB) are committed so that
+# the Streamlit dashboard works on Streamlit Cloud without any
+# external data store.
+# ============================================================
+data/raw/
+data/processed/X_train.npy
+data/processed/X_val.npy
+data/processed/y_reg_train.npy
+data/processed/y_reg_val.npy
+data/processed/y_clf_train.npy
+data/processed/y_clf_val.npy
+
+# ============================================================
+# Model artifacts — checkpoints can be hundreds of MB
+# ============================================================
+*.pt
+*.pth
+*.ckpt
+
+# ============================================================
+# API keys and secrets — NEVER commit these
+# ============================================================
+.env
+
+# ============================================================
+# Python
+# ============================================================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ============================================================
+# Virtual environments
+# ============================================================
+venv/
+.venv/
+env/
+.env/
+
+# ============================================================
+# Jupyter
+# ============================================================
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ============================================================
+# Weights & Biases
+# ============================================================
+wandb/
+
+# ============================================================
+# ChromaDB local storage
+# ============================================================
+chroma_db/
+*.sqlite3
+
+# ============================================================
+# OS files
+# ============================================================
+.DS_Store
+Thumbs.db

@@ -1,0 +1,74 @@
+# ============================================================
+# Core ML
+# PyTorch is our model framework. numpy and pandas handle
+# array math and data tables respectively.
+# ============================================================
+torch
+numpy
+pandas
+
+# ============================================================
+# Visualization
+# matplotlib is the low-level plotting library.
+# seaborn wraps matplotlib with prettier statistical plots.
+# ============================================================
+matplotlib
+seaborn
+
+# ============================================================
+# Preprocessing (NOT modeling — sklearn is allowed only here)
+# StandardScaler, train_test_split, LabelEncoder, etc.
+# ============================================================
+scikit-learn
+
+# ============================================================
+# Experiment tracking
+# Weights & Biases logs metrics, hyperparams, and artifacts
+# across training runs so we can compare experiments.
+# ============================================================
+wandb
+
+# ============================================================
+# API serving
+# fastapi is the web framework; uvicorn is the ASGI server
+# that actually handles HTTP connections.
+# ============================================================
+fastapi
+uvicorn[standard]
+
+# ============================================================
+# Agentic layer
+# langchain: foundational abstractions (prompts, chains, tools)
+# langgraph: stateful graph-based agent orchestration
+# langchain-anthropic: Claude API integration for LangChain
+# ============================================================
+langchain
+langgraph
+langchain-anthropic
+
+# ============================================================
+# RAG / vector store
+# chromadb: local vector database for semantic search over
+# scientific papers
+# ============================================================
+chromadb
+
+# ============================================================
+# Dashboard (Milestone 5.5)
+# streamlit: interactive web app framework for data apps
+# plotly: interactive charts (used by the dashboard)
+# scipy: Spearman correlation in the Feature Explorer tab
+# ============================================================
+streamlit>=1.35
+plotly>=5.20
+scipy
+
+# ============================================================
+# Utilities
+# pydantic: data validation and structured output schemas
+# python-dotenv: loads .env files (API keys, config)
+# httpx: async HTTP client (used internally by FastAPI/LangChain)
+# ============================================================
+pydantic
+python-dotenv
+httpx
